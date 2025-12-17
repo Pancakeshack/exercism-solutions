@@ -20,23 +20,17 @@ pub fn fahrenheit_to_celsius(f: Float) -> Float {
 }
 
 pub fn compare_temperature(left: Temperature, right: Temperature) -> Order {
-  let temp1 = c_from_temp(left)
-  let temp2 = c_from_temp(right)
-
-  float.compare(temp1, temp2)
-}
-
-fn c_from_temp(temp: Temperature) -> Float {
-  case temp {
-    Celsius(val) -> val
-    Fahrenheit(val) -> fahrenheit_to_celsius(val)
+  let convert = fn(x: Temperature) {
+    case x {
+      Celsius(val) -> val
+      Fahrenheit(val) -> fahrenheit_to_celsius(val)
+    }
   }
-}
 
-fn compare_cities(left: City, right: City) -> Order {
-  compare_temperature(left.temperature, right.temperature)
+  float.compare(convert(left), convert(right))
 }
 
 pub fn sort_cities_by_temperature(cities: List(City)) -> List(City) {
-  list.sort(cities, by: compare_cities)
+  cities
+  |> list.sort(fn(a, b) { compare_temperature(a.temperature, b.temperature) })
 }
